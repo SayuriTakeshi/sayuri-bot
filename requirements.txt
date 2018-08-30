@@ -1,0 +1,6 @@
+youtube-dl==2018.8.28
+asyncio==3.4.3
+aiohttp==1.0.5
+PyNaCl==1.0.1
+discord.py==0.16.12
+discord==0.0.2
