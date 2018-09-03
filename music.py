@@ -3,6 +3,8 @@ import requests
 import urllib3
 from discord.ext import commands
 from bs4 import BeautifulSoup
+from pprint import pprint
+import re
 
 
 embedPlayer = discord.Embed(
@@ -39,23 +41,27 @@ class Commands:
             await self.bot.say("O bot deve estar conectado para poder usar esse comando")
 
     @commands.command()
-    async def play(self, *args):
-        words = ""
-        for x in args:
-            words += x
-            words += "+"
-        srch = words
-        url = "https://www.youtube.com/results?search_query=" + srch
+    async def play(self,*args):
+        url = "https://www.youtube.com/results?search_query=" + '+'.join(args)
 
         data = requests.get(url)
         data = data.text
         soup = BeautifulSoup(data, "html.parser")
         vids = soup.find_all(attrs={'class': 'yt-uix-tile-link'})
+        duracao = soup.find_all(attrs={'class': 'accessible-description'})
         print(len(vids))
-        for x in range(5):
-            embedPlayer.add_field(name=vids[x]['title'], value='', inline=True)
-        await self.bot.say(embed=embedPlayer)
-        num = self.get_num()
+        lista = zip(vids[:5],duracao[:5])
+
+        for x,y in lista:
+            string = x['title'] + ' - '+ y.getText()[3:]
+            if string[-1] == '.':
+                string = string[:-1]
+
+            await self.bot.say(string)
+
+            #embedPlayer.add_field(name=vids[x]['title'], value='', inline=True)
+        #await self.bot.say(embed=embedPlayer)
+        #num = self.get_num()
 
     @commands.command()
     async def get_num(self, ctx):
