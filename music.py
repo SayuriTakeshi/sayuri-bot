@@ -17,6 +17,7 @@ embedPlayer = discord.Embed(
 class Commands:
     def __init__(self, bot):
         self.bot = bot
+        self.num = None
 
     @commands.command(pass_context=True)
     async def summon(self, ctx):
@@ -49,7 +50,6 @@ class Commands:
         soup = BeautifulSoup(data, "html.parser")
         vids = soup.find_all(attrs={'class': 'yt-uix-tile-link'})
         duracao = soup.find_all(attrs={'class': 'accessible-description'})
-        print(len(vids))
         lista = zip(vids[:5],duracao[:5])
 
         for x,y in lista:
@@ -59,15 +59,16 @@ class Commands:
 
             await self.bot.say(string)
 
-            #embedPlayer.add_field(name=vids[x]['title'], value='', inline=True)
-        #await self.bot.say(embed=embedPlayer)
-        #num = self.get_num()
+        
 
-    @commands.command()
-    async def get_num(self, ctx):
-        self.bot.say("Digite um numero de 1 a 5")
-        num = ctx.message.content
-        return num
+        async def on_message(self, message):
+            print('asdsa')
+            self.bot.send_message(message.channel, "Digite um numero de 1 a 5")
+            num = message.content
+            self.num = num
+        if not self.num:
+            musica = vids[self.num]['href']
+            print(musica)
 
 
 def setup(bot):
